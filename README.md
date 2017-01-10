@@ -1,31 +1,67 @@
-# QuickstartNgCli
+# quickstart-ng-cli
 
-This project was generated with [angular-cli](https://github.com/angular/angular-cli) version 1.0.0-beta.24.
+ ![Codeship Status for spboyer/quickstart-ng-cli](https://codeship.com/projects/93a14c00-fa7e-0133-18ae-12544c2ab455/status?branch=master)
 
-## Development server
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+# Blog Posts Related to angular-cli
+* Continuous Integration to Azure using Codeship and the Angular CLI - http://tattoocoder.com/angular2-azure-codeship-angularcli/
+* A Re-Quickstart using the CLI - http://tattoocoder.com/angular2-requickstart-using-cli/
+* Giving Your CLI a Server - http://tattoocoder.com/angular2-giving-your-cli-server/
 
-## Code scaffolding
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive/pipe/service/class/module`.
+## CodeShip Builds
+Configure your tests > Select "I want to create my own commands"
 
-## Build
+### Setup Commands
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+```bash
+#install node version
+nvm install 4.1
 
-## Running unit tests
+#install angular-cli
+npm install -g angular-cli --registry=https://registry.npmjs.org/
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+#run npm install, passing registry flag for proxy issues
+npm i --registry=https://registry.npmjs.org/
+```
 
-## Running end-to-end tests
+### Test / Build Commands
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-Before running the tests make sure you are serving the app via `ng serve`.
+```bash
+#serve the application adding '&' to run command in background
+ng serve &
 
-## Deploying to Github Pages
+#start enf to end tests using protractor
+ng e2e
 
-Run `ng github-pages:deploy` to deploy to Github Pages.
+#build the production code with the node server
+npm run build:nodserver-prod
+```
 
-## Further help
+### Azure Website Deployment Script
 
-To get more help on the `angular-cli` use `ng help` or go check out the [Angular-CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+```bash
+#Set your git user information
+git config user.email "yourname@domain.com"
+git config user.name "Your Name"
+
+# $AZURE_REPO_URL needs to be set in your projects Variables section
+# and include both username and password, e.g: https://username:password@site.scm.azurewebsites.net:443/site.git
+
+# Clone Azure repository
+git clone $AZURE_REPO_URL ~/azure
+
+# change into the local azure directory
+cd ~/azure
+
+# delete local repository azure contents
+rm -rf *
+
+# Copy /dist folder contents (our application)
+cp -rf ~/clone/dist/* .
+
+git add -A
+git commit --all --author "$CI_COMMITTER_NAME <$CI_COMMITTER_EMAIL>" --message "$CI_MESSAGE ($CI_BUILD_URL)"
+
+# Push changes to Azure
+git push origin master
+```
